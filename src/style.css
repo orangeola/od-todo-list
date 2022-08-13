@@ -3,9 +3,44 @@
     font-family: Arial, Helvetica, sans-serif;
     margin: 0px;
     padding: 0px;
-    overflow-x: hidden;
+
+    --sideBarWidth: 300px;
+    --headerHeight: 70px;
+
+    /*overflow-x: hidden;*/
+    white-space: initial;
 }
 
 body {
     height: 100vh;
+}
+
+#header {
+    min-width: 100%;
+    background-color: black;
+    height: var(--headerHeight);
+
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: 30px;
+    color: white;
+}
+
+#main {
+    min-height: calc(100vh - var(--headerHeight));
+    min-width: calc(100vw - var(--sideBarWidth));
+}
+
+#sideBar {
+    width: var(--sideBarWidth);
+    background-color: grey;
+    min-height: calc(100vh - var(--headerHeight));
+}
+
+#content {
+    display: flex;
+    min-height: calc(100vh - var(--headerHeight));
+    min-width: 100%;
+    word-break:break-all;
 }
