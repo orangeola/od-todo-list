@@ -37,12 +37,11 @@ const projectArray = (() => {
     }
     function delProjectDOM(name){
         const temp = document.getElementsByClassName('topic');
-        const tempArr = returnArray();
         let index = null;
         for(let i = 0; i < temp.length; i++){
             if(temp[i].innerText === name){
                 temp[i].remove();
-                index = 0;
+                index = i;
             }
         }
         if(index !== null){
@@ -51,14 +50,15 @@ const projectArray = (() => {
                 updateDOM();
             }
             else if(index < temp.length){
-                currentSelected = tempArr[index+1].name;
+                currentSelected = temp[index].innerText;
                 updateDOM();
             }
             else {
-                currentSelected = tempArr[index].name;
+                currentSelected = temp[index-1].innerText;
                 updateDOM();
             }
         }
+        console.log(objArray);
     };
     function delProjectJS(name){
         const temp = returnArray();
@@ -70,8 +70,8 @@ const projectArray = (() => {
     }
     function delProject(){
         if(currentSelected !== null){
-            delProjectDOM(currentSelected);
             delProjectJS(currentSelected);
+            delProjectDOM(currentSelected);
         }
     }
     return {addProject, delProject, returnArray}    
