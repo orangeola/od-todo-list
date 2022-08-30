@@ -37,9 +37,26 @@ const projectArray = (() => {
     }
     function delProjectDOM(name){
         const temp = document.getElementsByClassName('topic');
+        const tempArr = returnArray();
+        let index = null;
         for(let i = 0; i < temp.length; i++){
             if(temp[i].innerText === name){
                 temp[i].remove();
+                index = 0;
+            }
+        }
+        if(index !== null){
+            if(temp.length === 0){
+                currentSelected = null;
+                updateDOM();
+            }
+            else if(index < temp.length){
+                currentSelected = tempArr[index+1].name;
+                updateDOM();
+            }
+            else {
+                currentSelected = tempArr[index].name;
+                updateDOM();
             }
         }
     };
