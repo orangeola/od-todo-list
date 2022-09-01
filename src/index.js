@@ -23,7 +23,7 @@ const projectArray = (() => {
 
     };
     function addProjectJS(name){
-        const newProj = {
+        let newProj = {
             name: name,
             toDoList: []
         }
@@ -83,7 +83,7 @@ const projectArray = (() => {
         addToDoJS(currentSelected, newObj);
         //function that updates current page based on currentSelected
     }
-    return {addProject, delProject, returnArray}    
+    return {addProject, delProject, returnArray, addToDo}    
 })();
 
 const content = document.createElement("div");
@@ -175,6 +175,22 @@ function formToDoPopUp() {
     form.onsubmit = ()=>{
         //call addtodolist function with all variables from
         //inputs filled
+        let newToDo = {
+            title: toDoName.value,
+            description: toDoDes.value,
+            dueDate: toDoDate.value,
+            priority: toDoPriority.value
+        }
+        projectArray.addToDo(newToDo);
+        formDivContainer.remove();
+        console.log(projectArray.returnArray());
+        /*
+        alert(toDoName.value);
+        alert(toDoDes.value);
+        alert(toDoDate.value);
+        alert(toDoPriority.value);
+        */
+        return false;
     }   
     //input to-do name
     const toDoName = document.createElement("input");
