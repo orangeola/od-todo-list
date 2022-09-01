@@ -1,7 +1,5 @@
 import './style.css';
 
-console.log("test");
-
 const projectArray = (() => {
     const objArray = [];
     let currentSelected = null;
@@ -74,6 +72,17 @@ const projectArray = (() => {
             delProjectDOM(currentSelected);
         }
     }
+    function addToDoJS(name, newObj){
+        for(let i = 0; i < objArray.length; i++){
+            if(objArray[i].name === name){
+                objArray[i].toDoList.push(newObj);
+            }
+        }
+    }
+    function addToDo(newObj){
+        addToDoJS(currentSelected, newObj);
+        //function that updates current page based on currentSelected
+    }
     return {addProject, delProject, returnArray}    
 })();
 
@@ -98,6 +107,7 @@ header.appendChild(addTopicButton);
 const addToDoButton = document.createElement("button");
 addToDoButton.setAttribute('class','addButton');
 addToDoButton.innerText = "Add To Do";
+addToDoButton.addEventListener('click', formToDoPopUp);
 header.appendChild(addToDoButton);
 //add delete topic button
 const deleteTopicButton = document.createElement("button");
@@ -109,7 +119,7 @@ header.appendChild(deleteTopicButton);
 function formPopUp() {
     //pop up form
     const formDivContainer = document.createElement("div");
-    formDivContainer.setAttribute('id','formContainer');
+    formDivContainer.setAttribute('class','formContainer');
     const formDiv = document.createElement("div");
     formDiv.setAttribute('id','formPopUp');
     const form = document.createElement("form");
@@ -146,6 +156,70 @@ function formPopUp() {
     });
     //append everything
     form.appendChild(topicName);
+    form.appendChild(document.createElement('br'));
+    form.appendChild(s);
+    form.appendChild(close);
+    formDiv.appendChild(form);
+    formDivContainer.appendChild(formDiv);
+    document.body.prepend(formDivContainer);
+}
+
+function formToDoPopUp() {
+    //pop up form
+    const formDivContainer = document.createElement("div");
+    formDivContainer.setAttribute('class','formContainer');
+    const formDiv = document.createElement("div");
+    formDiv.setAttribute('id','formToDoPopUp');
+    const form = document.createElement("form");
+    form.setAttribute("method", "post");
+    form.onsubmit = ()=>{
+        //call addtodolist function with all variables from
+        //inputs filled
+    }   
+    //input to-do name
+    const toDoName = document.createElement("input");
+    toDoName.setAttribute("type", "text");
+    toDoName.setAttribute("name", "toDoName");
+    toDoName.setAttribute("placeholder", "Title");
+    toDoName.required = true;
+    //input description
+    const toDoDes = document.createElement("input");
+    toDoDes.setAttribute("type", "text");
+    toDoDes.setAttribute("name", "toDoDes");
+    toDoDes.setAttribute("placeholder", "Description");
+    toDoDes.required = true;
+    //input date
+    const toDoDate = document.createElement("input");
+    toDoDate.setAttribute("type", "date");
+    toDoDate.setAttribute("name", "toDoDate");
+    toDoDate.required = true;
+    //input priority
+    const toDoPriority = document.createElement("input");
+    toDoPriority.setAttribute("type", "number");
+    toDoPriority.setAttribute("name", "toDoPriority");
+    toDoPriority.setAttribute("min", 0);
+    toDoPriority.setAttribute("max", 5);
+    toDoPriority.required = true;
+    //submit
+    const s = document.createElement("input");
+    s.setAttribute("type", "submit");
+    s.setAttribute("value", "Submit");
+    //close button
+    const close = document.createElement("button");
+    close.innerText = "Close";
+    close.setAttribute("type", "button");
+    close.addEventListener('click', () => {
+        formDivContainer.remove();
+    });
+    //append everything
+    form.appendChild(toDoName);
+    form.appendChild(document.createElement('br'));
+    form.appendChild(toDoDes);
+    form.appendChild(document.createElement('br'));
+    form.appendChild(toDoDate);
+    form.appendChild(document.createElement('br'));
+    form.appendChild(toDoPriority);
+    form.appendChild(document.createElement('br'));
     form.appendChild(s);
     form.appendChild(close);
     formDiv.appendChild(form);
