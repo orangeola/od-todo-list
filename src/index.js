@@ -3,21 +3,26 @@ import './style.css';
 const projectArray = (() => {
     const objArray = [];
     let currentSelected = null;
+    function returnCurrent(){
+        for(let i = 0; i < objArray.length; i++){
+            if(objArray[i].name === currentSelected){
+                return i;
+            }
+        }
+        return null;
+    }
     function returnArray(){
         return objArray;
-    }
-    function updateDOM(){
-        main.innerText = currentSelected;
     }
     function addProjectDOM(name){
         const temp = document.createElement("div");
         temp.setAttribute('class','topic');
         temp.innerText = name;
         currentSelected = name;
-        updateDOM();
+        updateToDo();
         temp.addEventListener('click', ()=>{
             currentSelected = name;
-            updateDOM();
+            updateToDo();
         });
         document.getElementById("sideBar").appendChild(temp);
 
@@ -45,15 +50,15 @@ const projectArray = (() => {
         if(index !== null){
             if(temp.length === 0){
                 currentSelected = null;
-                updateDOM();
+                updateToDo();
             }
             else if(index < temp.length){
                 currentSelected = temp[index].innerText;
-                updateDOM();
+                updateToDo();
             }
             else {
                 currentSelected = temp[index-1].innerText;
-                updateDOM();
+                updateToDo();
             }
         }
         console.log(objArray);
@@ -81,9 +86,57 @@ const projectArray = (() => {
     }
     function addToDo(newObj){
         addToDoJS(currentSelected, newObj);
-        //function that updates current page based on currentSelected
+        updateToDo();
     }
-    return {addProject, delProject, returnArray, addToDo}    
+    function updateToDo(){
+        //clear main
+        main.innerHTML = "";
+        //locate currentselected topic in array
+        let currentTopic = null;
+        for(let i = 0; i < objArray.length; i++){
+            if(objArray[i].name === currentSelected){
+                currentTopic = objArray[i];
+            }
+        }
+        //look into array at currentselected topic
+        //for each todo, create a div with a certain id
+        //fill div with all the information
+        if(currentTopic !== null){
+            for(let i = 0; i < currentTopic.toDoList.length; i++){
+                let tempTDObject = document.createElement("div");
+                tempTDObject.setAttribute("class", "toDoObject");
+                let tempTitle = document.createElement("p");
+                tempTitle.innerText = currentTopic.toDoList[i].title;
+                let tempDesc = document.createElement("p");
+                tempDesc.innerText = currentTopic.toDoList[i].description;
+                let tempDue = document.createElement("p");
+                tempDue.innerText = currentTopic.toDoList[i].dueDate;
+                let tempPrio = document.createElement("p");
+                tempPrio.innerText = currentTopic.toDoList[i].priority;
+
+                let remove = document.createElement("button");
+                remove.innerText = "Delete";
+                remove.addEventListener('click', () => {
+                    const tempCurrent = projectArray.returnCurrent();
+                    for(let i = 0; i < objArray[tempCurrent].toDoList.length; i++){
+                        if(objArray[tempCurrent].toDoList[i].title === tempTitle.innerText){
+                            objArray[tempCurrent].toDoList.splice(i, 1);
+                            console.log(projectArray.returnArray());
+                        }
+                    }
+                    tempTDObject.remove();
+                });
+
+                tempTDObject.appendChild(tempTitle)
+                tempTDObject.appendChild(tempDesc)
+                tempTDObject.appendChild(tempDue)
+                tempTDObject.appendChild(tempPrio)
+                tempTDObject.appendChild(remove)
+                document.getElementById("main").appendChild(tempTDObject);
+            }
+        }
+    }
+    return {addProject, delProject, returnArray, addToDo, returnCurrent}    
 })();
 
 const content = document.createElement("div");
@@ -91,7 +144,6 @@ content.setAttribute('id','content');
 
 const main = document.createElement("div");
 main.setAttribute('id','main');
-main.innerText = "Moeny";
 
 //header
 const header = document.createElement("div");
@@ -173,8 +225,13 @@ function formToDoPopUp() {
     const form = document.createElement("form");
     form.setAttribute("method", "post");
     form.onsubmit = ()=>{
-        //call addtodolist function with all variables from
-        //inputs filled
+        const temp = projectArray.returnArray();
+        const tempCurrent = projectArray.returnCurrent();
+        for(let i = 0; i < temp[tempCurrent].toDoList.length; i++){
+            if(temp[tempCurrent].toDoList[i].title === toDoName.value){
+                return false;
+            }
+        }
         let newToDo = {
             title: toDoName.value,
             description: toDoDes.value,
@@ -184,12 +241,6 @@ function formToDoPopUp() {
         projectArray.addToDo(newToDo);
         formDivContainer.remove();
         console.log(projectArray.returnArray());
-        /*
-        alert(toDoName.value);
-        alert(toDoDes.value);
-        alert(toDoDate.value);
-        alert(toDoPriority.value);
-        */
         return false;
     }   
     //input to-do name
@@ -251,21 +302,3 @@ content.appendChild(sideBar);
 content.appendChild(main);
 document.body.appendChild(header);
 document.body.appendChild(content);
-
-const home = document.createElement("div");
-home.setAttribute('id','home');
-home.setAttribute('class','topicS');
-home.innerText = "home";
-document.getElementById("sideBar").appendChild(home);
-
-const today = document.createElement("div");
-today.setAttribute('id','today');
-today.setAttribute('class','topicS');
-today.innerText = "today";
-document.getElementById("sideBar").appendChild(today);
-
-const week = document.createElement("div");
-week.setAttribute('id','week');
-week.setAttribute('class','topicS');
-week.innerText = "week";
-document.getElementById("sideBar").appendChild(week);
