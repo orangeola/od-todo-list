@@ -1,7 +1,7 @@
 import './style.css';
 
 const projectArray = (() => {
-    const objArray = [];
+    let objArray = [];
     let currentSelected = null;
     function returnCurrent(){
         for(let i = 0; i < objArray.length; i++){
@@ -25,7 +25,6 @@ const projectArray = (() => {
             updateToDo();
         });
         document.getElementById("sideBar").appendChild(temp);
-
     };
     function addProjectJS(name){
         let newProj = {
@@ -37,6 +36,7 @@ const projectArray = (() => {
     function addProject(name){
         addProjectDOM(name);
         addProjectJS(name);
+        updateStorage();
     }
     function delProjectDOM(name){
         const temp = document.getElementsByClassName('topic');
@@ -75,6 +75,7 @@ const projectArray = (() => {
         if(currentSelected !== null){
             delProjectJS(currentSelected);
             delProjectDOM(currentSelected);
+            updateStorage();
         }
     }
     function addToDoJS(name, newObj){
@@ -87,6 +88,7 @@ const projectArray = (() => {
     function addToDo(newObj){
         addToDoJS(currentSelected, newObj);
         updateToDo();
+        updateStorage();
     }
     function updateToDo(){
         //clear main
@@ -134,9 +136,30 @@ const projectArray = (() => {
                 tempTDObject.appendChild(remove)
                 document.getElementById("main").appendChild(tempTDObject);
             }
+        } 
+    }
+    function updateAll(){
+        for(let i = 0; i < objArray.length; i++){
+            addProjectDOM(objArray[i].name);
+            if(i === objArray.length - 1){
+                updateToDo()
+            }
         }
     }
-    return {addProject, delProject, returnArray, addToDo, returnCurrent}    
+    function onLoad(){
+        objArray = JSON.parse(localStorage.objArr);
+        if(Array.isArray(objArray)){
+            currentSelected = objArray[0].name;
+        }
+        else {
+            objArray = [];
+        }
+        updateAll();
+    }
+    function updateStorage(){
+        localStorage.objArr = JSON.stringify(objArray);
+    }
+    return {addProject, delProject, returnArray, addToDo, returnCurrent, onLoad}    
 })();
 
 const content = document.createElement("div");
@@ -302,3 +325,7 @@ content.appendChild(sideBar);
 content.appendChild(main);
 document.body.appendChild(header);
 document.body.appendChild(content);
+
+if (localStorage.getItem("objArr") !== null) {
+    projectArray.onLoad();
+}
