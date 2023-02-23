@@ -2,9 +2,12 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  experiments: {
+    topLevelAwait: true
+  },
   mode: 'development',
   entry: {
-    index: './src/index.js'
+    index: './src/index.js',
   },
   devtool: 'inline-source-map',
   plugins: [

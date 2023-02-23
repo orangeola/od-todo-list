@@ -1,4 +1,6 @@
 import './style.css';
+import { collection, addDoc, getDocs, doc, getDoc, setDoc } from "firebase/firestore"; 
+import {db, app} from "../src/firebase/config"
 
 const projectArray = (() => {
     let objArray = [];
@@ -146,7 +148,8 @@ const projectArray = (() => {
             }
         }
     }
-    function onLoad(){
+    async function onLoad(){
+        /*
         objArray = JSON.parse(localStorage.objArr);
         if(Array.isArray(objArray)){
             currentSelected = objArray[0].name;
@@ -155,9 +158,24 @@ const projectArray = (() => {
             objArray = [];
         }
         updateAll();
+        */
+
+        const docRef = doc(db, "cities", "LA");
+        const docSnap = await getDoc(docRef);
+
+        if (docSnap.exists()) {
+        objArray = docSnap.data().data;
+        } else {
+            objArray = [];
+        }
+        updateAll();
     }
-    function updateStorage(){
-        localStorage.objArr = JSON.stringify(objArray);
+    async function updateStorage(){
+        //localStorage.objArr = JSON.stringify(objArray);
+
+        await setDoc(doc(db, "cities", "LA"), {
+            data: objArray
+            });
     }
     return {addProject, delProject, returnArray, addToDo, returnCurrent, onLoad}    
 })();
