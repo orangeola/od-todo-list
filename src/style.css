@@ -4,7 +4,7 @@
     margin: 0px;
     padding: 0px;
 
-    --sideBarWidth: 300px;
+    --sideBarWidth: 200px;
     --headerHeight: 70px;
 
     /*overflow-x: hidden;*/
@@ -17,14 +17,13 @@ body {
 
 #header {
     min-width: 100%;
-    background-color: black;
+    background-color: bisque;
     height: var(--headerHeight);
 
     display: flex;
     justify-content: flex-start;
     align-items: center;
     padding-left: 30px;
-    color: white;
 }
 
 #main {
@@ -33,11 +32,15 @@ body {
     margin: 0 auto;
     text-align: center;
     padding-top: 20px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 50px;
 }
 
 #sideBar {
     width: var(--sideBarWidth);
-    background-color: grey;
+    background-color: beige;
     min-height: calc(100vh - var(--headerHeight));
 }
 
@@ -46,6 +49,7 @@ body {
     min-height: calc(100vh - var(--headerHeight));
     min-width: 100%;
     word-break:break-all;
+    background-color: indianred;
 }
 
 .topic, .topicS {
@@ -84,4 +88,8 @@ body {
 
 .toDoObject {
     
+}
+
+#clicked {
+    color: indianred;
 }

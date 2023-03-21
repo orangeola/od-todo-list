@@ -23,9 +23,22 @@ const projectArray = (() => {
         currentSelected = name;
         updateToDo();
         temp.addEventListener('click', ()=>{
+            let removeAt = document.getElementById('clicked');
+            if(removeAt){
+                console.log("here");
+                removeAt.removeAttribute('id', 'clicked');
+            }
+            temp.setAttribute('id','clicked');
             currentSelected = name;
             updateToDo();
         });
+        let removeAt = document.getElementById('clicked');
+        if(removeAt === null){
+            temp.setAttribute('id','clicked'); 
+        } else {
+            removeAt.removeAttribute('id', 'clicked');
+            temp.setAttribute('id','clicked'); 
+        }
         document.getElementById("sideBar").appendChild(temp);
     };
     function addProjectJS(name){
@@ -56,10 +69,12 @@ const projectArray = (() => {
             }
             else if(index < temp.length){
                 currentSelected = temp[index].innerText;
+                temp[index].setAttribute('id','clicked'); 
                 updateToDo();
             }
             else {
                 currentSelected = temp[index-1].innerText;
+                temp[index-1].setAttribute('id','clicked'); 
                 updateToDo();
             }
         }
@@ -110,13 +125,13 @@ const projectArray = (() => {
                 let tempTDObject = document.createElement("div");
                 tempTDObject.setAttribute("class", "toDoObject");
                 let tempTitle = document.createElement("p");
-                tempTitle.innerText = currentTopic.toDoList[i].title;
+                tempTitle.innerText = "Title: " + currentTopic.toDoList[i].title;
                 let tempDesc = document.createElement("p");
-                tempDesc.innerText = currentTopic.toDoList[i].description;
+                tempDesc.innerText = "Description: " + currentTopic.toDoList[i].description;
                 let tempDue = document.createElement("p");
-                tempDue.innerText = currentTopic.toDoList[i].dueDate;
+                tempDue.innerText = "Due Date: " + currentTopic.toDoList[i].dueDate;
                 let tempPrio = document.createElement("p");
-                tempPrio.innerText = currentTopic.toDoList[i].priority;
+                tempPrio.innerText = "Priority: " + currentTopic.toDoList[i].priority;
 
                 let remove = document.createElement("button");
                 remove.innerText = "Delete";
@@ -149,21 +164,9 @@ const projectArray = (() => {
         }
     }
     async function onLoad(){
-        /*
-        objArray = JSON.parse(localStorage.objArr);
-        if(Array.isArray(objArray)){
-            currentSelected = objArray[0].name;
-        }
-        else {
-            objArray = [];
-        }
-        updateAll();
-        */
-
-        const docRef = doc(db, "cities", "LA");
+        const docRef = doc(db, "todolist", "task");
         const docSnap = await getDoc(docRef);
-
-        if (docSnap.exists()) {
+        if (docSnap.exists() && docSnap.data().data !== undefined) {
         objArray = docSnap.data().data;
         } else {
             objArray = [];
@@ -171,9 +174,7 @@ const projectArray = (() => {
         updateAll();
     }
     async function updateStorage(){
-        //localStorage.objArr = JSON.stringify(objArray);
-
-        await setDoc(doc(db, "cities", "LA"), {
+        await setDoc(doc(db, "todolist", "task"), {
             data: objArray
             });
     }
@@ -266,23 +267,28 @@ function formToDoPopUp() {
     const form = document.createElement("form");
     form.setAttribute("method", "post");
     form.onsubmit = ()=>{
-        const temp = projectArray.returnArray();
-        const tempCurrent = projectArray.returnCurrent();
-        for(let i = 0; i < temp[tempCurrent].toDoList.length; i++){
-            if(temp[tempCurrent].toDoList[i].title === toDoName.value){
-                return false;
+        if(projectArray.returnCurrent() !== null){
+            const temp = projectArray.returnArray();
+            const tempCurrent = projectArray.returnCurrent();
+            for(let i = 0; i < temp[tempCurrent].toDoList.length; i++){
+                if(temp[tempCurrent].toDoList[i].title === toDoName.value){
+                    return false;
+                }
             }
+            let newToDo = {
+                title: toDoName.value,
+                description: toDoDes.value,
+                dueDate: toDoDate.value,
+                priority: toDoPriority.value
+            }
+            projectArray.addToDo(newToDo);
+            formDivContainer.remove();
+            console.log(projectArray.returnArray());
+            return false;
+        } else {
+            alert("Please create a topic first.")
+            return false;
         }
-        let newToDo = {
-            title: toDoName.value,
-            description: toDoDes.value,
-            dueDate: toDoDate.value,
-            priority: toDoPriority.value
-        }
-        projectArray.addToDo(newToDo);
-        formDivContainer.remove();
-        console.log(projectArray.returnArray());
-        return false;
     }   
     //input to-do name
     const toDoName = document.createElement("input");
@@ -344,6 +350,4 @@ content.appendChild(main);
 document.body.appendChild(header);
 document.body.appendChild(content);
 
-if (localStorage.getItem("objArr") !== null) {
-    projectArray.onLoad();
-}
+projectArray.onLoad();
